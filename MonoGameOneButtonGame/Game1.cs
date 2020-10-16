@@ -16,28 +16,12 @@ namespace MonoGameOneButtonGame
         SpriteBatch spriteBatch;
         
         Gamemanager gameManager;
-
-        BoulderController[] boulderArray;
-
-        BoulderController boulderController;
-
-        BoulderController boulderOne;
-        BoulderController boulderTwo;
-        BoulderController boulderThree;
-        BoulderController boulderFour;
-        BoulderController boulderFive;      
-
-        PlayerController playerController;
         
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);           
             
-            gameManager = new Gamemanager();
-            boulderController = new BoulderController();
-
-            //Stores each individual boulder
-            boulderArray = new BoulderController[5];
+            gameManager = new Gamemanager(this);
 
             // 1200x800 Window
             gameManager.SetContentRootDirectory(Content);
@@ -46,27 +30,11 @@ namespace MonoGameOneButtonGame
 
         protected override void Initialize()
         {
-            //PlayerController is a game component, so we put in in Initialize
-            playerController = new PlayerController(this);
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
-            //Sets boulders and their location
-            boulderOne = new BoulderController(new Vector2(190, -550));
-            boulderTwo = new BoulderController(new Vector2(390, -550));
-            boulderThree = new BoulderController(new Vector2(590, -550));
-            boulderFour = new BoulderController(new Vector2(790, -550));
-            boulderFive = new BoulderController(new Vector2(990, -550));
-
-            //Store boulders in array
-            boulderArray[0] = boulderOne;
-            boulderArray[1] = boulderTwo;
-            boulderArray[2] = boulderThree;
-            boulderArray[3] = boulderFour;
-            boulderArray[4] = boulderFive;
-
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
@@ -77,7 +45,7 @@ namespace MonoGameOneButtonGame
             gameManager.PlaySong();
             // Sets platform, character, platform and flag textures
 
-            playerController.SetSpriteTextures(Content);
+            gameManager.playerController.SetSpriteTextures(Content);
         }
 
         
@@ -90,20 +58,21 @@ namespace MonoGameOneButtonGame
                 Exit();
 
             //Player Movement
-            playerController.HandleKeyboardInput(gameManager.GetTime());
+            gameManager.playerController.HandleKeyboardInput(gameManager.GetTime());
 
-            //Boulder Movement
-            boulderController.UpdateBoulders(boulderArray, gameManager.GetTime());
+            //Boulder Movement and hitbox update
+            gameManager.boulderController.Update(gameTime);
+
             //Player hitbox for collision
-            playerController.UpdateRectangleCharacter();
+            gameManager.playerController.UpdateRectangleCharacter();
 
             //Player has collided with boulder, points go to 0
-            if(playerController.CheckBoulderCollision(boulderArray))
+            if (gameManager.playerController.CheckBoulderCollision(gameManager.boulderController.GetBoulderArray()))
             {
                 gameManager.SetPoints(0);
             }
             //Player has collided with flag, points++
-            if(playerController.CheckFlagCollision(gameManager.GetFlag()))
+            if (gameManager.playerController.CheckFlagCollision())
             {
                 gameManager.IncrementPoints();
             }
@@ -123,15 +92,15 @@ namespace MonoGameOneButtonGame
             // | GAME ENTITIES |
 
             //Platform Draw
-            spriteBatch.Draw(playerController.GetPlatformTexture(), new Rectangle(0, 650, 1500, 10), Color.White);
+            spriteBatch.Draw(gameManager.playerController.GetPlatformTexture(), new Rectangle(0, 650, 1500, 10), Color.White);
             //Character Draw
-            spriteBatch.Draw(playerController.GetCharacterTexture(), playerController.GetPosition(), null, Color.White, 0,
-                new Vector2(0,0), 1, playerController.GetSpriteEffects(),0);
+            spriteBatch.Draw(gameManager.playerController.GetCharacterTexture(), gameManager.playerController.GetPosition(), null, Color.White, 0,
+                new Vector2(0,0), 1, gameManager.playerController.GetSpriteEffects(),0);
             //Flag Draw
-            spriteBatch.Draw(playerController.GetFlagTexture(), new Rectangle(1150, 555, 60, 120), Color.White);
+            spriteBatch.Draw(gameManager.playerController.GetFlagTexture(), new Rectangle(1150, 555, 60, 120), Color.White);
 
             //Boulders Draw
-            boulderController.DrawBoulders(spriteBatch, playerController.GetBoulderTexture(), playerController.GetSpriteEffects(), boulderArray);
+            gameManager.boulderController.DrawBoulders(spriteBatch, gameManager.playerController.GetBoulderTexture(), gameManager.playerController.GetSpriteEffects(), gameManager.boulderController.GetBoulderArray());
               
             //  | TEXT |
             

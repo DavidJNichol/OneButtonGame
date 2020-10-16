@@ -18,6 +18,9 @@ namespace MonoGameOneButtonGame
         public Vector2 position;
         public Rectangle characterBoundingBox;
 
+        public Rectangle flagBoundryBox;
+        public Vector2 flagLocation;
+
         public Character(Game game) : base(game)
         {
             direction = new Vector2(1, 0);
@@ -25,12 +28,25 @@ namespace MonoGameOneButtonGame
             position = startPosition;
             speed = 210;
 
+            flagLocation = new Vector2(1150, 555);
+            flagBoundryBox = new Rectangle((int)flagLocation.X, (int)flagLocation.Y, 60, 120);
+
             characterBoundingBox = new Rectangle((int)position.X, (int)position.Y, 53, 85);
         }
 
         public Vector2 GetStartPosition()
         {
             return startPosition;
+        }
+
+        public Vector2 GetFlagLocation()
+        {
+            return flagLocation;
+        }
+
+        public Rectangle GetFlagBoundryBox()
+        {
+            return flagBoundryBox;
         }
 
         public Texture2D GetPlatformTexture()

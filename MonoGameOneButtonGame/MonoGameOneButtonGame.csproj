@@ -47,15 +47,9 @@
       <DependentUpon>BoulderController.cs</DependentUpon>
     </Compile>
     <Compile Include="Character.cs" />
-    <Compile Include="Flag.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Gamemanager.cs" />
-    <Compile Include="PlayerController.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="PlayerController.Designer.cs">
-      <DependentUpon>PlayerController.cs</DependentUpon>
-    </Compile>
+    <Compile Include="PlayerController.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Sprite.cs" />

@@ -1,29 +1,22 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace MonoGameOneButtonGame
 {
-    public partial class PlayerController : Component
+    public partial class PlayerController : Microsoft.Xna.Framework.GameComponent
     {
         Character character;
 
-        public PlayerController(Game game)
+        public PlayerController(Game game) :
+            base(game)
         {
-            InitializeComponent();
             character = new Character(game);
         }
 
         public void HandleKeyboardInput(float time)
         {
-            if(Keyboard.GetState().IsKeyDown(Keys.D) || Keyboard.GetState().IsKeyDown(Keys.Right))
+            if (Keyboard.GetState().IsKeyDown(Keys.D) || Keyboard.GetState().IsKeyDown(Keys.Right))
             {
                 character.velocity = 0;
                 character.acceleration = .01f;
@@ -32,13 +25,6 @@ namespace MonoGameOneButtonGame
                 character.velocity += character.acceleration * character.acceleration * (time / 1000);
                 character.position += (character.direction * character.speed) * (time / 1000);
             }
-        }
-
-        public PlayerController(IContainer container)
-        {
-            container.Add(this);
-
-            InitializeComponent();
         }
 
         public Texture2D GetPlatformTexture()
@@ -90,29 +76,29 @@ namespace MonoGameOneButtonGame
         {
             return character.characterBoundingBox;
         }
-        
+
         public void UpdateRectangleCharacter()
         {
             character.characterBoundingBox.X = (int)character.position.X;
             character.characterBoundingBox.Y = (int)character.position.Y;
         }
 
-        public bool CheckBoulderCollision(BoulderController[] boulderArray)
+        public bool CheckBoulderCollision(Boulder[] boulderArray)
         {
-            for(int i = 0; i < boulderArray.Length; i++)
+            for (int i = 0; i < boulderArray.Length; i++)
             {
                 if (GetPlayerBounds().Intersects(boulderArray[i].boulderBoundingBox))
                 {
                     ResetCharacterPosition();
                     return true;
-                }              
+                }
             }
-                return false;           
+            return false;
         }
 
-        public bool CheckFlagCollision(Flag flag)
+        public bool CheckFlagCollision()
         {
-            if(GetPlayerBounds().Intersects(flag.flagBoundryBox))
+            if (GetPlayerBounds().Intersects(character.GetFlagBoundryBox()))
             {
                 ResetCharacterPosition();
                 return true;

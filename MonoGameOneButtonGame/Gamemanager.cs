@@ -8,7 +8,7 @@ namespace MonoGameOneButtonGame
     {
         public int points;
 
-        private Flag flag;
+        //private Flag flag;
 
         private Song song;        
 
@@ -22,9 +22,15 @@ namespace MonoGameOneButtonGame
 
         private Color backgroundColor;
 
-        public Gamemanager()
+        public PlayerController playerController;
+
+        public BoulderController boulderController;
+
+        public Gamemanager(Game game) 
         {
-            flag = new Flag();
+            boulderController = new BoulderController(game);
+            playerController = new PlayerController(game);
+
             displayText = "Welcome to Monogame One Button Game!";
             backgroundColor = Color.LightGoldenrodYellow;
             displayTextLocation = new Vector2(430, 680);
@@ -76,11 +82,6 @@ namespace MonoGameOneButtonGame
         public Vector2 GetDisplayTextLocation()
         {
             return displayTextLocation;
-        }
-
-        public Flag GetFlag()
-        {
-            return flag;
         }
 
         public void InitializeSong(Microsoft.Xna.Framework.Content.ContentManager content)

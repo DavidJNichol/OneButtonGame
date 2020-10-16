@@ -5,54 +5,72 @@ namespace MonoGameOneButtonGame
 {
     //: Component
     //UNCOMMENT THING IN BOULDER.DESIGN
-    public partial class BoulderController
+    public partial class BoulderController : Microsoft.Xna.Framework.GameComponent
     {
-        public Vector2 boulderStartPosition;
-        public Vector2 boulderCurrentPosition;
-        public float boulderSpeed;
-        public float boulderAcceleration;
-        public Vector2 boulderDirection;
-        public float boulderVelocity;
-        public Rectangle boulderBoundingBox;
+        private Boulder boulderOne;
+        private Boulder boulderTwo;
+        private Boulder boulderThree;
+        private Boulder boulderFour;
+        private Boulder boulderFive;
 
-        public BoulderController()
+        private Boulder[] boulderArray;
+
+        public BoulderController(Game game) : base(game)
         {
+            boulderArray = new Boulder[5];
 
+            //Sets boulders and their location
+            boulderOne = new Boulder(game, new Vector2(190, -550));
+            boulderTwo = new Boulder(game, new Vector2(390, -550));
+            boulderThree = new Boulder(game, new Vector2(590, -550));
+            boulderFour = new Boulder(game, new Vector2(790, -550));
+            boulderFive = new Boulder(game, new Vector2(990, -550));
+
+
+
+            //Store boulders in array
+            boulderArray[0] = boulderOne;
+            boulderArray[1] = boulderTwo;
+            boulderArray[2] = boulderThree;
+            boulderArray[3] = boulderFour;
+            boulderArray[4] = boulderFive;
         }
 
-        public BoulderController(Vector2 startPosition)
+        public void MoveBoulders(float time)
         {
-            InitializeComponent();
-            boulderCurrentPosition = startPosition;
-            boulderSpeed = 680;
-            boulderDirection = new Vector2(0, 1);
-            boulderBoundingBox = new Rectangle((int)boulderCurrentPosition.X, (int)boulderCurrentPosition.Y, 80, 800);
+            for(int i = 0; i < boulderArray.Length; i++)
+            {
+                boulderArray[i].boulderAcceleration += .5f;
+
+                boulderArray[i].boulderVelocity += boulderArray[i].boulderAcceleration * boulderArray[i].boulderVelocity * (time / 1000);
+                boulderArray[i].boulderCurrentPosition += boulderArray[i].boulderDirection * boulderArray[i].boulderSpeed * (time / 1000);
+
+                if (boulderArray[i].boulderCurrentPosition.Y > -147)
+                {
+                    boulderArray[i].boulderDirection = new Vector2(0, -1);
+                }
+                if (boulderArray[i].boulderCurrentPosition.Y < -550)
+                {
+                    boulderArray[i].boulderDirection = new Vector2(0, 1);
+                }
+            }         
         }
 
-        public void MoveBoulder(float time)
+        public Boulder[] GetBoulderArray()
         {
-            boulderAcceleration += .5f;
-
-            boulderVelocity += boulderAcceleration * boulderVelocity * (time / 1000);
-            boulderCurrentPosition += boulderDirection * boulderSpeed * (time / 1000);
-
-            if (boulderCurrentPosition.Y > -147)
-            {
-                boulderDirection = new Vector2(0, -1);
-            }
-            if (boulderCurrentPosition.Y < -550)
-            {
-                boulderDirection = new Vector2(0, 1);
-            }
+            return boulderArray;
         }
 
         public void UpdateRectangleBoulder()
         {
-            boulderBoundingBox.X = (int)boulderCurrentPosition.X;
-            boulderBoundingBox.Y = (int)boulderCurrentPosition.Y;
+            for(int i = 0; i < boulderArray.Length; i++)
+            {
+                boulderArray[i].boulderBoundingBox.X = (int)boulderArray[i].boulderCurrentPosition.X;
+                boulderArray[i].boulderBoundingBox.Y = (int)boulderArray[i].boulderCurrentPosition.Y;
+            }
         }
 
-        public void DrawBoulders(SpriteBatch spriteBatch, Texture2D boulderTexture, SpriteEffects spriteEffects, BoulderController[] boulderArray)
+        public void DrawBoulders(SpriteBatch spriteBatch, Texture2D boulderTexture, SpriteEffects spriteEffects, Boulder[] boulderArray)
         {
             for(int i = 0; i < boulderArray.Length; i++)
             {
@@ -60,13 +78,20 @@ namespace MonoGameOneButtonGame
             }            
         }
 
-        public void UpdateBoulders(BoulderController[] boulderArray, float time)
+        public void UpdateBoulders(float time)
         {
             for (int i = 0; i < boulderArray.Length; i++)
             {
-                boulderArray[i].MoveBoulder(time);
-                boulderArray[i].UpdateRectangleBoulder();
+                MoveBoulders(time);
+                UpdateRectangleBoulder();
             }
+        }
+
+        public override void Update(GameTime gameTime)
+        {
+            UpdateBoulders((float)gameTime.ElapsedGameTime.TotalMilliseconds);
+
+
         }
     }
 }
